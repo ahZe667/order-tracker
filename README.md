@@ -47,3 +47,7 @@ The app uses SQLite to keep setup small. Run one app container at a time. The co
 | Tempo | <http://localhost:3200> |
 
 The request metric is `http_server_request_duration_seconds` with `http_route` and `http_response_status_code` labels. Logs carry `trace_id`, so Grafana links each log line to its trace. Set `ORDER_TRACKER_TELEMETRY=console` instead of `otlp` to print the signals to `docker compose logs app`.
+
+### Alert
+
+`observability/grafana/provisioning/alerting/rules.yaml` defines the Grafana alert **Order Tracker 5xx responses**. Every 10 seconds it counts 5xx responses per route over the last 5 minutes and fires on the first one. The labels carry the endpoint (`http_route`), and the annotations add the time window and a dashboard link. With no 5xx responses there is no series to evaluate, and the rule stays Normal (`noDataState: OK`).

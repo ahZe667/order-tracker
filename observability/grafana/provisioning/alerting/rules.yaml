@@ -1,0 +1,54 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: order-tracker
+    folder: Order Tracker
+    interval: 10s
+    rules:
+      - uid: order-tracker-5xx
+        title: Order Tracker 5xx responses
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              refId: A
+              instant: true
+              # 5xx count over the last 5 minutes per route. A plain increase()
+              # misses the first error of a brand-new series, so a route that
+              # had no 5xx series 5 minutes ago counts from zero.
+              expr: |
+                sum by (http_route) (http_server_request_duration_seconds_count{service_name="order-tracker", http_response_status_code=~"5.."})
+                - (sum by (http_route) (http_server_request_duration_seconds_count{service_name="order-tracker", http_response_status_code=~"5.."} offset 5m)
+                   or sum by (http_route) (http_server_request_duration_seconds_count{service_name="order-tracker", http_response_status_code=~"5.."}) * 0)
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        # No 5xx series at all means no server errors: stay Normal.
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        labels:
+          service: order-tracker
+          severity: critical
+        annotations:
+          summary: "GET {{ $labels.http_route }} returned {{ $values.A.Value }} 5xx responses in the last 5m"
+          description: >-
+            Order Tracker answered GET {{ $labels.http_route }} with a server error
+            {{ $values.A.Value }} times in the last 5 minutes, so customers cannot open
+            those orders. Check the dashboard, then the error logs and traces for the route.
+          endpoint: "GET {{ $labels.http_route }}"
+          window: 5m
+          dashboard_url: http://localhost:3000/d/order-tracker/order-tracker?orgId=1&from=now-30m&to=now
+          __dashboardUid__: order-tracker
+          __panelId__: "2"
