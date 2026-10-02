@@ -1,17 +1,33 @@
+import logging
 import os
 import sqlite3
+import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
+from opentelemetry import metrics, trace
+from opentelemetry.trace import SpanKind, StatusCode
 from pydantic import BaseModel, Field
+
+from app.telemetry import LOGGER_NAME, setup_telemetry
 
 
 DB_PATH = Path(os.getenv("ORDER_DB_PATH", "data/orders.db"))
 STATUSES = {"received", "preparing", "shipped", "delivered"}
+LOOKUP_ROUTE = "/api/orders/{order_id}"
+
+setup_telemetry()
+logger = logging.getLogger(LOGGER_NAME)
+tracer = trace.get_tracer(LOGGER_NAME)
+request_duration = metrics.get_meter(LOGGER_NAME).create_histogram(
+    "http.server.request.duration",
+    unit="s",
+    description="Duration of order lookup requests",
+)
 
 
 def connect():
@@ -77,6 +93,44 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="Order Tracker", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def observe_order_lookups(request: Request, call_next):
+    if request.method != "GET" or not request.url.path.startswith("/api/orders/"):
+        return await call_next(request)
+
+    order_id = request.url.path.removeprefix("/api/orders/")
+    attributes = {"http.request.method": "GET", "http.route": LOOKUP_ROUTE}
+    started = time.perf_counter()
+    status = 500
+    with tracer.start_as_current_span(f"GET {LOOKUP_ROUTE}", kind=SpanKind.SERVER) as span:
+        span.set_attributes({**attributes, "url.path": request.url.path, "order.id": order_id})
+        try:
+            response = await call_next(request)
+            status = response.status_code
+        except Exception:
+            logger.exception(
+                "Order lookup failed",
+                extra={**attributes, "http.response.status_code": status, "order.id": order_id},
+            )
+            raise
+        else:
+            logger.log(
+                logging.ERROR if status >= 500 else logging.INFO,
+                "Order lookup returned %s",
+                status,
+                extra={**attributes, "http.response.status_code": status, "order.id": order_id},
+            )
+            return response
+        finally:
+            span.set_attribute("http.response.status_code", status)
+            if status >= 500:
+                span.set_status(StatusCode.ERROR)
+            request_duration.record(
+                time.perf_counter() - started,
+                {**attributes, "http.response.status_code": status},
+            )
 
 
 @app.get("/")
