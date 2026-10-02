@@ -66,3 +66,5 @@ Start it from the repository root in its own terminal. It needs a logged-in `cla
 ```bash
 uv run --frozen python incident-response/responder.py
 ```
+
+Grafana sends the alert to the responder via the `incident-responder` contact point (`observability/grafana/provisioning/alerting/contact-points.yaml`, webhook `http://host.docker.internal:8001/alerts`, `group_wait: 5s`).
