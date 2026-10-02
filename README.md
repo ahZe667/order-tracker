@@ -34,3 +34,16 @@ Run tests with `uv run --frozen pytest -q`. Stop the app with `docker compose do
 | PATCH | `/api/orders/{id}` | Change an order status |
 
 The app uses SQLite to keep setup small. Run one app container at a time. The course exercise is about detecting and handling an incident, not scaling the database.
+
+## Observability
+
+`docker compose up --build -d --wait` also starts the telemetry stack. The app sends OpenTelemetry metrics, logs, and traces for order lookups (`GET /api/orders/{id}`) over OTLP to the Collector, which forwards them to Prometheus, Loki, and Tempo. Configuration lives in `observability/`.
+
+| Service | URL |
+| --- | --- |
+| Grafana (anonymous viewer) | <http://localhost:3000/d/order-tracker> |
+| Prometheus | <http://localhost:9090> |
+| Loki | <http://localhost:3100> |
+| Tempo | <http://localhost:3200> |
+
+The request metric is `http_server_request_duration_seconds` with `http_route` and `http_response_status_code` labels. Logs carry `trace_id`, so Grafana links each log line to its trace. Set `ORDER_TRACKER_TELEMETRY=console` instead of `otlp` to print the signals to `docker compose logs app`.
