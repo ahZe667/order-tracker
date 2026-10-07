@@ -1,0 +1,8 @@
+# Escalation: 20261007T095755026436Z-order-tracker-5xx-responses
+
+The responder could not confirm a fix.
+
+- Agent outcome: ESCALATE: The root cause is found and a fix is in place (date arithmetic in `order_detail` replaced with `timedelta(days=2)`), but someone with shell access needs to run the tests, restart the app and re-check `/api/orders/express-1002`, because those commands were blocked here.
+- Verification: {"ok": false, "requests": [{"path": "/api/orders/express-1002", "status": 500, "error": null}], "tests_passed": true, "tests_output": ".........                                                                [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.14/site-packages/fastapi/testclient.py:1\n  /Users/djaroszewski/projects/github/order-tracker/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n.venv/lib/python3.14/site-packages/starlette/testclient.py:53\n  /Users/djaroszewski/projects/github/order-tracker/.venv/lib/python3.14/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n9 passed, 2 warnings in 1.36s\n"}
+
+See evidence.md and agent-response.md.

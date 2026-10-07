@@ -1,0 +1,14 @@
+{
+  "incident": "20261007T095720195683Z-respondertest",
+  "alert": {
+    "alertname": "ResponderTest",
+    "test": "true"
+  },
+  "agent_started": "2026-10-07T09:57:20.221076+00:00",
+  "agent_finished": "2026-10-07T09:57:27.669861+00:00",
+  "agent_error": null,
+  "agent_cost_usd": 0.0296006,
+  "agent_outcome": "NO ACTION: The alert is a test notification and the evidence shows no failing requests.",
+  "verification": null,
+  "status": "no_action"
+}

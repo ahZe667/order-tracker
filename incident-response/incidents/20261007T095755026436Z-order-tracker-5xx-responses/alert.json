@@ -1,0 +1,64 @@
+{
+  "notification": {
+    "receiver": "incident-responder",
+    "status": "firing",
+    "groupLabels": {
+      "alertname": "Order Tracker 5xx responses",
+      "grafana_folder": "Order Tracker"
+    },
+    "commonLabels": {
+      "alertname": "Order Tracker 5xx responses",
+      "grafana_folder": "Order Tracker",
+      "http_route": "/api/orders/{order_id}",
+      "service": "order-tracker",
+      "severity": "critical"
+    },
+    "commonAnnotations": {
+      "dashboard_url": "http://localhost:3000/d/order-tracker/order-tracker?orgId=1&from=now-30m&to=now",
+      "description": "Order Tracker answered GET /api/orders/{order_id} with a server error 1 times in the last 5 minutes, so customers cannot open those orders. Check the dashboard, then the error logs and traces for the route.",
+      "endpoint": "GET /api/orders/{order_id}",
+      "summary": "GET /api/orders/{order_id} returned 1 5xx responses in the last 5m",
+      "window": "5m"
+    },
+    "externalURL": "http://localhost:3000/",
+    "appVersion": "13.0.9",
+    "version": "1",
+    "groupKey": "{}:{alertname=\"Order Tracker 5xx responses\", grafana_folder=\"Order Tracker\"}",
+    "truncatedAlerts": 0,
+    "orgId": 1,
+    "title": "[FIRING:1] Order Tracker 5xx responses Order Tracker (/api/orders/{order_id} order-tracker critical)",
+    "state": "alerting",
+    "message": "**Firing**\n\nValue: A=1, C=1\nLabels:\n - alertname = Order Tracker 5xx responses\n - grafana_folder = Order Tracker\n - http_route = /api/orders/{order_id}\n - service = order-tracker\n - severity = critical\nAnnotations:\n - dashboard_url = http://localhost:3000/d/order-tracker/order-tracker?orgId=1&from=now-30m&to=now\n - description = Order Tracker answered GET /api/orders/{order_id} with a server error 1 times in the last 5 minutes, so customers cannot open those orders. Check the dashboard, then the error logs and traces for the route.\n - endpoint = GET /api/orders/{order_id}\n - summary = GET /api/orders/{order_id} returned 1 5xx responses in the last 5m\n - window = 5m\nSource: http://localhost:3000/alerting/grafana/order-tracker-5xx/view?orgId=1\nSilence: http://localhost:3000/alerting/silence/new?alertmanager=grafana&matcher=__alert_rule_uid__%3Dorder-tracker-5xx&matcher=http_route%3D%2Fapi%2Forders%2F%7Border_id%7D&matcher=service%3Dorder-tracker&matcher=severity%3Dcritical&orgId=1\nDashboard: http://localhost:3000/d/order-tracker?from=1791363470000&orgId=1&to=1791367075021\nPanel: http://localhost:3000/d/order-tracker?from=1791363470000&orgId=1&to=1791367075021&viewPanel=2\n"
+  },
+  "alert": {
+    "status": "firing",
+    "labels": {
+      "alertname": "Order Tracker 5xx responses",
+      "grafana_folder": "Order Tracker",
+      "http_route": "/api/orders/{order_id}",
+      "service": "order-tracker",
+      "severity": "critical"
+    },
+    "annotations": {
+      "dashboard_url": "http://localhost:3000/d/order-tracker/order-tracker?orgId=1&from=now-30m&to=now",
+      "description": "Order Tracker answered GET /api/orders/{order_id} with a server error 1 times in the last 5 minutes, so customers cannot open those orders. Check the dashboard, then the error logs and traces for the route.",
+      "endpoint": "GET /api/orders/{order_id}",
+      "summary": "GET /api/orders/{order_id} returned 1 5xx responses in the last 5m",
+      "window": "5m"
+    },
+    "startsAt": "2026-10-07T09:57:50Z",
+    "endsAt": "0001-01-01T00:00:00Z",
+    "generatorURL": "http://localhost:3000/alerting/grafana/order-tracker-5xx/view?orgId=1",
+    "fingerprint": "4f283efda4e94e95",
+    "silenceURL": "http://localhost:3000/alerting/silence/new?alertmanager=grafana&matcher=__alert_rule_uid__%3Dorder-tracker-5xx&matcher=http_route%3D%2Fapi%2Forders%2F%7Border_id%7D&matcher=service%3Dorder-tracker&matcher=severity%3Dcritical&orgId=1",
+    "dashboardURL": "http://localhost:3000/d/order-tracker?from=1791363470000&orgId=1&to=1791367075021",
+    "panelURL": "http://localhost:3000/d/order-tracker?from=1791363470000&orgId=1&to=1791367075021&viewPanel=2",
+    "ruleUID": "order-tracker-5xx",
+    "values": {
+      "A": 1,
+      "C": 1
+    },
+    "valueString": "[ var='A' labels={http_route=/api/orders/{order_id}} type='query' value=1 ], [ var='C' labels={http_route=/api/orders/{order_id}} type='threshold' value=1 ]",
+    "orgId": 1
+  }
+}

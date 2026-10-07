@@ -1,0 +1,9 @@
+{
+  "route": null,
+  "window_seconds": 900,
+  "unavailable": {},
+  "request_counts": [],
+  "error_logs": [],
+  "error_traces": [],
+  "failing_paths": []
+}
