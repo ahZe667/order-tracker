@@ -51,6 +51,8 @@ PROMPT = """You are the on-call engineer for Order Tracker, the app in this repo
 A Grafana alert reached the incident responder. Everything collected for you is in
 {incident}/: alert.json (the alert as Grafana sent it) and evidence.md / evidence.json
 (request counts, error logs and error traces from the last 15 minutes).
+Your shell starts in the repository root. Run every command from there and never use `cd`;
+commands that change directory are denied.
 
 1. Read the alert and the evidence first.
 2. If the alert is a test (label test="true") or the evidence shows no failing requests,
